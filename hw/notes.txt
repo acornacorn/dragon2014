@@ -1,0 +1,15 @@
+Hardware:
+
+Eye LED pins:
+1 (black) = +4.5v
+2         = red cathode
+3         = green cathode
+4         = blue cathode
+
+Each eye has 2 LEDs.  Each LED color has a resistor:
+red: 180ohm
+g,b: 200ohm
+
+Can work with 4.5
+Works with 6 volts PWM only (<100% duty cycle).  (Red will have 12mA at 6v or
+24mA at 6.6v which is over spec and can burn it out.)
