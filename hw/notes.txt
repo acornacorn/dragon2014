@@ -13,3 +13,16 @@ g,b: 200ohm
 Can work with 4.5
 Works with 6 volts PWM only (<100% duty cycle).  (Red will have 12mA at 6v or
 24mA at 6.6v which is over spec and can burn it out.)
+
+
+TEENSY PINS
+Digital pin 14 - look left/right servo
+Digital pin 15 - left eye blink servo
+Digital pin 16 - right eye blink servo
+Digital pin 17 - lip snarl servo
+
+D23/A9 - blue  eye led PWM
+D22/A8 - green eye led PWM
+D21/A7 - red   eye led PWM
+
+
