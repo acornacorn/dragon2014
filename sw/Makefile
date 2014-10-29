@@ -1,15 +1,18 @@
 
 # The name of your project (used to name the compiled .hex file)
-TARGET = main
+TARGET = dragon
 
 # Path to your arduino installation
-ARDUINOPATH ?= ../../../..
+#ARDUINOPATH ?= ../../../..
+#ARDUINOPATH ?= ../../../Software/arduino/arduino-1.0.6
+ARDUINOPATH ?= arduino
 
 # configurable options
-OPTIONS = -DF_CPU=48000000 -DUSB_SERIAL -DLAYOUT_US_ENGLISH
+OPTIONS = -DF_CPU=72000000 -DUSB_SERIAL -DLAYOUT_US_ENGLISH
 
 # options needed by many Arduino libraries to configure for Teensy 3.0
-OPTIONS += -D__MK20DX128__ -DARDUIO=105 -DTEENSYDUINO=118
+#OPTIONS += -D__MK20DX128__ -DARDUIO=105 -DTEENSYDUINO=118
+OPTIONS += -D__MK20DX256__ -DARDUIO=106 -DTEENSYDUINO=120
 
 
 # Other Makefiles and project templates for Teensy 3.x:
@@ -35,12 +38,19 @@ LIBRARYPATH = $(ARDUINOPATH)/libraries
 # path location for the arm-none-eabi compiler
 COMPILERPATH = $(ARDUINOPATH)/hardware/tools/arm-none-eabi/bin
 
+TEENSY3 = $(ARDUINOPATH)/hardware/teensy/cores/teensy3
+
 #************************************************************************
 # Settings below this point usually do not need to be edited
 #************************************************************************
 
+INCLUDES :=
+INCLUDES += -I.
+INCLUDES += -Iarduino/hardware/teensy/cores/teensy3
+INCLUDES += -Iarduino/libraries/Servo
+
 # CPPFLAGS = compiler options for C and C++
-CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) -I.
+CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) $(INCLUDES)
 
 # compiler options for C++ only
 CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti
@@ -48,8 +58,10 @@ CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti
 # compiler options for C only
 CFLAGS =
 
+LINKSCRIPT := $(ARDUINOPATH)/hardware/teensy/cores/teensy3/mk20dx256.ld
+
 # linker options
-LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -Tmk20dx128.ld
+LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -T$(LINKSCRIPT)
 
 # additional libraries to link
 LIBS = -lm
@@ -60,11 +72,62 @@ CC = $(abspath $(COMPILERPATH))/arm-none-eabi-gcc
 CXX = $(abspath $(COMPILERPATH))/arm-none-eabi-g++
 OBJCOPY = $(abspath $(COMPILERPATH))/arm-none-eabi-objcopy
 SIZE = $(abspath $(COMPILERPATH))/arm-none-eabi-size
+AR = $(abspath $(COMPILERPATH))/arm-none-eabi-ar
 
 # automatically create lists of the sources and objects
 # TODO: this does not handle Arduino libraries yet...
-C_FILES := $(wildcard *.c)
-CPP_FILES := $(wildcard *.cpp)
+#C_FILES := $(wildcard *.c)
+#CPP_FILES := $(wildcard *.cpp)
+
+C_FILES :=
+CPP_FILES :=
+#CPP_FILES += dragon_main.cpp
+
+C_FILES += $(TEENSY3)/usb_keyboard.c
+C_FILES += $(TEENSY3)/mk20dx128.c
+C_FILES += $(TEENSY3)/math_helper.c
+C_FILES += $(TEENSY3)/usb_mouse.c
+C_FILES += $(TEENSY3)/nonstd.c
+C_FILES += $(TEENSY3)/usb_joystick.c
+C_FILES += $(TEENSY3)/keylayouts.c
+C_FILES += $(TEENSY3)/serial3.c
+C_FILES += $(TEENSY3)/pins_teensy.c
+C_FILES += $(TEENSY3)/usb_desc.c
+C_FILES += $(TEENSY3)/usb_rawhid.c
+C_FILES += $(TEENSY3)/usb_mem.c
+C_FILES += $(TEENSY3)/serial1.c
+C_FILES += $(TEENSY3)/touch.c
+C_FILES += $(TEENSY3)/usb_midi.c
+C_FILES += $(TEENSY3)/eeprom.c
+C_FILES += $(TEENSY3)/usb_seremu.c
+C_FILES += $(TEENSY3)/serial2.c
+C_FILES += $(TEENSY3)/usb_serial.c
+C_FILES += $(TEENSY3)/usb_dev.c
+C_FILES += $(TEENSY3)/analog.c
+
+CPP_FILES += $(TEENSY3)/Tone.cpp
+CPP_FILES += $(TEENSY3)/AudioStream.cpp
+CPP_FILES += $(TEENSY3)/HardwareSerial2.cpp
+CPP_FILES += $(TEENSY3)/HardwareSerial1.cpp
+CPP_FILES += $(TEENSY3)/new.cpp
+CPP_FILES += $(TEENSY3)/DMAChannel.cpp
+CPP_FILES += $(TEENSY3)/WMath.cpp
+CPP_FILES += $(TEENSY3)/HardwareSerial3.cpp
+CPP_FILES += $(TEENSY3)/usb_inst.cpp
+CPP_FILES += $(TEENSY3)/IntervalTimer.cpp
+CPP_FILES += $(TEENSY3)/yield.cpp
+CPP_FILES += $(TEENSY3)/Print.cpp
+CPP_FILES += $(TEENSY3)/usb_flightsim.cpp
+CPP_FILES += $(TEENSY3)/Stream.cpp
+CPP_FILES += $(TEENSY3)/IPAddress.cpp
+CPP_FILES += $(TEENSY3)/avr_emulation.cpp
+CPP_FILES += $(TEENSY3)/WString.cpp
+
+# Use my own main() function
+#CPP_FILES += $(TEENSY3)/main.cpp
+
+CPP_FILES += $(LIBRARYPATH)/Servo/Servo.cpp
+
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 
 
@@ -72,13 +135,29 @@ OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 
 all: $(TARGET).hex
 
-$(TARGET).elf: $(OBJS) mk20dx128.ld
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+lib$(TARGET).a: $(OBJS)
+	rm -f $@
+	$(AR) rcs $@ $^
+  
+
+$(TARGET).elf: lib$(TARGET).a  $(LINKSCRIPT) dragon_main.o
+	$(CC) $(LDFLAGS) -o $@ dragon_main.o lib$(TARGET).a -larm_cortexM4l_math -lm
+
+###%.hex: %.elf
+###	$(SIZE) $<
+###	$(OBJCOPY) -O ihex -R .eeprom $< $@
+###	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $@) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
+###	-$(abspath $(TOOLSPATH))/teensy_reboot
 
 %.hex: %.elf
 	$(SIZE) $<
+	$(OBJCOPY) -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 $< $(@:.elf=.eep)
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
-	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $@) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
+	@echo ""
+	@echo "Build succeeded.  Type 'make bpr' to program and run."
+
+bpr: $(TARGET).hex
+	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $<) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
 	-$(abspath $(TOOLSPATH))/teensy_reboot
 
 
@@ -86,6 +165,8 @@ $(TARGET).elf: $(OBJS) mk20dx128.ld
 -include $(OBJS:.o=.d)
 
 clean:
-	rm -f *.o *.d $(TARGET).elf $(TARGET).hex
+	rm -f *.o *.d $(TEENSY3)/*.o $(TEENSY3)/*.d $(TARGET).elf $(TARGET).hex
+	-find $(LIBRARYPATH) -name '*.o' -exec rm -f {} \;
+	-find $(LIBRARYPATH) -name '*.d' -exec rm -f {} \;
 
 

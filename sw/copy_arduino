@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#@DOC@ create and populate arduino directory
+
+src=/home/acorn/Software/arduino/arduino-1.0.6
+
+rm -rf arduino
+mkdir -p arduino/hardware/teensy/cores
+mkdir -p arduino/hardware/tools
+cp -a $src/hardware/tools/arm-none-eabi arduino/hardware/tools/
+cp -a $src/libraries arduino/libraries/
+cp -a $src/hardware/teensy/cores/teensy3 arduino/hardware/teensy/cores/
+cp -a $src/hardware/tools/teensy* arduino/hardware/tools/
+
+
+
