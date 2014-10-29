@@ -46,12 +46,19 @@ int checkKey()
 bool big = true;
 void loop() 
 {  
+  int x = 0;
   for(;;)
   {
     digitalWrite(alive_led, HIGH);
     delay(100);
     digitalWrite(alive_led, LOW);
     delay(100);
+
+    char buf[20];
+    x++;
+    snprintf(buf, sizeof(buf), "x=%x", x);
+    Serial.println(buf);
+
     yield();
   }
 
