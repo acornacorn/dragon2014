@@ -30,20 +30,169 @@ typedef struct SerialPort
   int empty_cnt;
 } SerialPort;
 
+typedef struct BitDef
+{
+  int bit;
+  const char *name;
+} BitDef;
+
 SerialPort *g_serial_ports = NULL;
 
 int g_debug = 0;
 
+// not thead safe.
+// Return value only valid until next call.
+const char *bitString(int val, BitDef *bits)
+{
+  static char buf[1000];
+  char *s = buf;
+
+  for (; bits->name ; bits++)
+  {
+    if (val & bits->bit)
+    {
+      if (bits->name && bits->name[0])
+      {
+        int n = snprintf(s, sizeof(buf) - (s - buf) - 2, "%s,", bits->name);
+        if (n + s > buf + sizeof(buf) - 3)
+          return "ERROR CALCULATING BITS";
+        s += n;
+      }
+      val &= ~bits->bit;
+    }
+  }
+  if (val)
+  {
+    snprintf(s, sizeof(buf) - (s - buf) - 2, "UKNOWN=%08x,", val);
+  }
+
+  return buf;
+}
+
+// return name for val
+const char *charName(int val, BitDef *bits)
+{
+  for (; bits->name ; bits++)
+  {
+    if (val == bits->bit)
+      return bits->name;
+  }
+  return "???";
+}
+
 void showTermios(const struct termios *tio, const char *filename)
 {
+  #define BIT(n) { n, #n }
+  BitDef ibits[] = {
+    BIT(IGNBRK),
+    BIT(BRKINT),
+    BIT(IGNPAR),
+    BIT(PARMRK),
+    BIT(INPCK),
+    BIT(ISTRIP),
+    BIT(INLCR),
+    BIT(IGNCR),
+    BIT(ICRNL),
+    BIT(IUCLC),
+    BIT(IXON),
+    BIT(IXANY),
+    BIT(IXOFF),
+    BIT(IMAXBEL),
+    BIT(IUTF8),
+    {0,NULL},
+  };
+  BitDef obits[] = {
+    BIT(OPOST),
+    BIT(OLCUC),
+    BIT(ONLCR),
+    BIT(OCRNL),
+    BIT(ONOCR),
+    BIT(ONLRET),
+    BIT(OFILL),
+    BIT(OFDEL),
+    BIT(NLDLY),
+    BIT(CRDLY),
+    BIT(TABDLY),
+    BIT(BSDLY),
+    BIT(VTDLY),
+    BIT(FFDLY),
+    {0,NULL},
+  };
+  BitDef cbits[] = {
+    BIT(CSIZE),
+    BIT(CSTOPB),
+    BIT(CREAD),
+    BIT(PARENB),
+    BIT(PARODD),
+    BIT(HUPCL),
+    BIT(CLOCAL),
+    // BIT(LOBLK),
+    BIT(CIBAUD),
+    BIT(CMSPAR),
+    BIT(CRTSCTS),
+    {CBAUD,""},
+    {CBAUDEX,""},
+    {0,NULL},
+  };
+  BitDef lbits[] = {
+    BIT(ISIG),
+    BIT(ICANON),
+    BIT(XCASE),
+    BIT(ECHO),
+    BIT(ECHOE),
+    BIT(ECHOK),
+    BIT(ECHONL),
+    BIT(ECHOCTL),
+    BIT(ECHOPRT),
+    BIT(ECHOKE),
+    //BIT(DEFECHO),
+    BIT(FLUSHO),
+    BIT(NOFLSH),
+    BIT(TOSTOP),
+    BIT(PENDIN),
+    BIT(IEXTEN),
+    {0,NULL},
+  };
+  BitDef cc_chars[] = {
+    BIT(VDISCARD),
+    //BIT(VDSUSP),
+    BIT(VEOF),
+    BIT(VEOL),
+    BIT(VEOL2),
+    BIT(VERASE),
+    BIT(VINTR),
+    BIT(VKILL),
+    BIT(VLNEXT),
+    BIT(VMIN),
+    BIT(VQUIT),
+    BIT(VREPRINT),
+    BIT(VSTART),
+    //BIT(VSTATUS),
+    BIT(VSTOP),
+    BIT(VSUSP),
+    //BIT(VSWTCH),
+    BIT(VTIME),
+    BIT(VWERASE),
+    {0,NULL},
+  };
+  #undef BIT
+
   speed_t ispeed = cfgetispeed(tio);
   speed_t ospeed = cfgetospeed(tio);
 
   printf("got termios for %s\n", filename);
-  printf("  c_iflag = 0x%08x\n", tio->c_iflag);
-  printf("  c_oflag = 0x%08x\n", tio->c_oflag);
-  printf("  c_cflag = 0x%08x\n", tio->c_cflag);
-  printf("  c_lflag = 0x%08x\n", tio->c_lflag);
+  printf("  c_iflag = 0x%08x = %s\n", 
+    tio->c_iflag,
+    bitString(tio->c_iflag, ibits));
+  printf("  c_oflag = 0x%08x = %s\n", 
+    tio->c_oflag,
+    bitString(tio->c_oflag, obits));
+  printf("  c_cflag = 0x%08x = %s\n", 
+    tio->c_cflag,
+    bitString(tio->c_cflag, cbits));
+  printf("  c_lflag = 0x%08x = %s\n", 
+    tio->c_lflag,
+    bitString(tio->c_lflag, lbits));
 
   printf("  ispeed = %ld\n",(long)ispeed);
   printf("  ospeed = %ld\n",(long)ospeed);
@@ -54,10 +203,11 @@ void showTermios(const struct termios *tio, const char *filename)
     {
       if (tio->c_cc[i] != 0)
       {
-        printf("    c_cc[0x%03x] = %3d = %02x\n",
+        printf("    c_cc[0x%03x] = %3d = %02x  (%s)\n",
           i,
           tio->c_cc[i],
-          tio->c_cc[i]);
+          tio->c_cc[i],
+          charName(i, cc_chars));
       }
     }
   }
@@ -102,36 +252,18 @@ void setupStdin()
   if (g_debug)
     showTermios(&tio, "stdin");
 
-#if 0
-  tio.c_iflag &= ~IGNBRK;
-  tio.c_iflag |= INPCK;
-
-  tio.c_cflag &= ~CREAD;
-
-  #define FORCE_TERMIO_FLAGS 1
-  if (FORCE_TERMIO_FLAGS)
-  {
-    tio.c_iflag = INPCK;
-    tio.c_oflag = 0;
-    tio.c_cflag = 0x8bd;
-    tio.c_lflag = 0;
-  }
-
+  tio.c_lflag &= ~ICANON;
   tio.c_cc[VTIME] = 0;
   tio.c_cc[VMIN] = 0;
-
-  cfsetispeed(&tio, B9600);
-  cfsetospeed(&tio, B9600);
 
   errno = 0;
   rv = tcsetattr(fd, TCSAFLUSH, &tio);
 
   if (rv)
   {
-    fprintf(stderr, "tcsetattr failed.  %s\n",
+    fprintf(stderr, "tcsetattr for stdin failed.  %s\n",
       strerror(errno));
   }
-#endif
 }
 
 // Default termios for ttyACM* device file:
@@ -448,6 +580,41 @@ void doRead(SerialPort *sp)
   }
 }
 
+void doReadStdin()
+{
+  const int fd = 0;
+  char buf[1];
+  int n;
+
+  errno = 0;
+  n = read(fd, buf, 1);
+
+  if (n == 1)
+  {
+    SerialPort *sp;
+    for (sp = g_serial_ports ; sp ; sp = sp->next)
+    {
+      int rv;
+      errno = 0;
+      rv = write(sp->fd, buf, 1);
+      if (rv != 1)
+      {
+        fprintf(stderr, "Error writing char 0x%02x to %s. %s\n",
+          buf[0], sp->dev, strerror(errno));
+      }
+    }
+  }
+  else if (n == 0)
+  {
+    return;
+  }
+  else
+  {
+    fprintf(stderr, "Error in read(stdin).  %s\n",
+      strerror(errno));
+  }
+}
+
 void doSelect(void)
 {
   fd_set fdr, fdw, fdx;
@@ -459,6 +626,10 @@ void doSelect(void)
   FD_ZERO(&fdr);
   FD_ZERO(&fdw);
   FD_ZERO(&fdx);
+
+  // stdin
+  FD_SET(0, &fdr);
+  cnt = 1;
 
   for (sp = g_serial_ports ; sp ; sp = sp->next)
   {
@@ -483,6 +654,8 @@ void doSelect(void)
         doRead(sp);
       }
     }
+
+    doReadStdin();
   }
   else if (n == 0)
   {
@@ -525,7 +698,6 @@ int main(int argc, char *argv[])
 {
   setupStdin();
 
-  //addSerialPort("/dev/ttyACM1");
   addAllSerialPorts();
 
   if (!g_serial_ports)
