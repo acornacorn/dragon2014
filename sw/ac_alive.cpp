@@ -4,6 +4,8 @@
 #include <dragon_pins.h>
 #include <Arduino.h>
 
+static const bool ALIVE_PRINTF = true;
+
 static AcCounter g_alive_counter;
 
 void acAliveInit()
@@ -20,7 +22,8 @@ void acAliveUpdate()
     if (val)
     {
       digitalWrite(dpin_alive_led, HIGH);
-      acPrintf("alive %d\n", millis());
+      if (ALIVE_PRINTF)
+        acPrintf("alive %d\n", millis());
     }
     else
     {

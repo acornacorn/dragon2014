@@ -12,6 +12,7 @@
 #include <ac_alive.h> 
 #include <ac_printf.h> 
 #include <dragon_servos.h> 
+#include <dragon_buttons.h> 
 #include <dragon_pins.h> 
  
 #if 0
@@ -26,6 +27,7 @@ void setup()
 
   acAliveInit();
   dragonServoInit();
+  dragonButtonInit();
 
   Serial.println("Hello");
 } 
@@ -122,10 +124,8 @@ void doServos()
 void loop() 
 {  
   acAliveUpdate();
-
-#if 1
   dragonServoUpdate();
-#endif
+  dragonButtonUpdate();
 
 #if 0
 #if 0

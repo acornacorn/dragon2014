@@ -61,7 +61,6 @@ TEENSY3 = $(ARDUINOPATH)/hardware/teensy/cores/teensy3
 INCLUDES :=
 INCLUDES += -I.
 INCLUDES += -Iarduino/hardware/teensy/cores/teensy3
-INCLUDES += -Iarduino/libraries/Servo
 
 # CPPFLAGS = compiler options for C and C++
 CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) $(INCLUDES)
@@ -142,6 +141,9 @@ CPP_FILES += $(TEENSY3)/WString.cpp
 
 # Arduino libraries
 CPP_FILES += $(LIBRARYPATH)/Servo/Servo.cpp
+CPP_FILES += $(LIBRARYPATH)/Bounce/Bounce.cpp
+INCLUDES += -Iarduino/libraries/Servo
+INCLUDES += -Iarduino/libraries/Bounce
 
 # My files (not including dragon_main.cpp)
 CPP_FILES += ac_alive.cpp
@@ -149,6 +151,7 @@ CPP_FILES += ac_servo.cpp
 CPP_FILES += ac_timer.cpp
 CPP_FILES += ac_printf.cpp
 CPP_FILES += dragon_servos.cpp
+CPP_FILES += dragon_buttons.cpp
 
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 
