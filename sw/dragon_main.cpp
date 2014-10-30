@@ -8,30 +8,29 @@
 */ 
 
 #include <Arduino.h> 
-#include <Servo.h> 
+//#include <Servo.h> 
+#include <ac_alive.h> 
+#include <ac_printf.h> 
+#include <dragon_servos.h> 
+#include <dragon_pins.h> 
  
-Servo look_servo; 
-Servo leye_servo; 
-Servo reye_servo; 
-Servo lip_servo; 
-
-// create servo object to control a servo 
-                // twelve servo objects can be created on most boards
- 
+#if 0
 int pos = 0;    // variable to store the servo position 
-int alive_led=13;
+#endif
+
+
 
 void setup() 
 { 
   Serial.begin(38400);
-  pinMode(alive_led, OUTPUT);
-  look_servo.attach(14);  // look is pin 14
-  leye_servo.attach(15);  // look is pin 15
-  reye_servo.attach(16);  // look is pin 16
-  lip_servo.attach(17);  // look is pin 17
+
+  acAliveInit();
+  dragonServoInit();
+
   Serial.println("Hello");
 } 
 
+#if 0
 int checkKey()
 {
   int a = Serial.peek();
@@ -43,28 +42,24 @@ int checkKey()
   return -1;
 }
 
-bool big = true;
-void loop() 
-{  
-  int x = 0;
-  for(;;)
+bool g_big_servo_motion = true;
+#endif
+
+
+#if 0
+void doServos()
+{
+  uint32_t now = millis;
+
+  static mode = 0;
+
+  if (mode == 0)
   {
-    digitalWrite(alive_led, HIGH);
-    delay(100);
-    digitalWrite(alive_led, LOW);
-    delay(100);
 
-    char buf[20];
-    x++;
-    snprintf(buf, sizeof(buf), "x=%x", x);
-    Serial.println(buf);
-
-    yield();
   }
 
   bool cmd = false;
   Serial.println("Up");
-  digitalWrite(alive_led, HIGH);
   for(pos = 0; pos <= 180; pos += 1) // goes from 0 degrees to 180 degrees 
   {                                  // in steps of 1 degree 
     look_servo.write(pos);              // tell servo to go to position in variable 'pos' 
@@ -74,9 +69,9 @@ void loop()
        cmd=true;
        break; 
     }
+    yield();
   } 
   Serial.println("Dn");
-  digitalWrite(alive_led, LOW);
   for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
   {                                
     look_servo.write(pos);              // tell servo to go to position in variable 'pos' 
@@ -86,6 +81,7 @@ void loop()
        cmd=true;
        break; 
     }
+    yield();
   }
   
   while (cmd)
@@ -94,7 +90,7 @@ void loop()
     if (v >= 'a' && v <= 'z')
     {
        v -= 'a';
-       if (big)
+       if (g_big_servo_motion)
        {
          v *= 255;
          v /= 26;
@@ -110,14 +106,125 @@ void loop()
        pos=v;
     }
     if (v=='B')
-      big=true;
+      g_big_servo_motion=true;
     if (v=='S')
-      big=false; 
+      g_big_servo_motion=false; 
     if (v=='Q')
       cmd=false;
+
+    yield();
   }
   
   // Range of HS300 servo: d=29...176=s  mid: 107=l
+}
+#endif
+
+void loop() 
+{  
+#if 0
+  digitalWrite(dpin_alive_led, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(300);               // wait for a second
+  digitalWrite(dpin_alive_led, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
+#endif
+
+  Serial.println("a");
+  Serial.flush();
+  delay(10);
+  yield();
+
+  acPrintf("helloz %d\n", millis());
+
+  //printf("hello\n");
+
+#if 1
+  acAliveUpdate();
+#endif
+
+
+
+#if 0
+  dragonServoUpdate();
+#endif
+
+#if 0
+#if 0
+  int x = 0;
+  for(;;)
+  {
+
+    char buf[20];
+    x++;
+    snprintf(buf, sizeof(buf), "x=%x", x);
+    Serial.println(buf);
+
+    yield();
+  }
+#endif
+
+#if 0
+  doServos();
+#else
+  bool cmd = false;
+  Serial.println("Up");
+  for(pos = 0; pos <= 180; pos += 1) // goes from 0 degrees to 180 degrees 
+  {                                  // in steps of 1 degree 
+    look_servo.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+    if (checkKey() != -1)
+    {
+       cmd=true;
+       break; 
+    }
+    yield();
+  } 
+  Serial.println("Dn");
+  for(pos = 180; pos>=0; pos-=1)     // goes from 180 degrees to 0 degrees 
+  {                                
+    look_servo.write(pos);              // tell servo to go to position in variable 'pos' 
+    delay(15);                       // waits 15ms for the servo to reach the position 
+    if (checkKey() != -1)
+    {
+       cmd=true;
+       break; 
+    }
+    yield();
+  }
+  
+  while (cmd)
+  {
+    int v = Serial.read();
+    if (v >= 'a' && v <= 'z')
+    {
+       v -= 'a';
+       if (g_big_servo_motion)
+       {
+         v *= 255;
+         v /= 26;
+       }
+       else
+       {
+         v = 128 + v - 13;
+       }
+       char buf[100];
+       sprintf(buf,"val=%d",v);
+       Serial.println(buf);
+       look_servo.write(v);
+       pos=v;
+    }
+    if (v=='B')
+      g_big_servo_motion=true;
+    if (v=='S')
+      g_big_servo_motion=false; 
+    if (v=='Q')
+      cmd=false;
+
+    yield();
+  }
+  
+  // Range of HS300 servo: d=29...176=s  mid: 107=l
+#endif
+#endif
 } 
 
 extern "C" int main(void)

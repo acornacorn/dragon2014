@@ -1,4 +1,15 @@
 
+default: all
+
+h: help
+help:
+	@echo "Targets:"
+	@echo "  all   - build .elf and .hex (default target)"
+	@echo "  bpr   - build, program, and run"
+	@echo "  tags  - make tags file"
+	@echo "  clean - remove generated files"
+	@echo "  help  - show this help"
+
 # The name of your project (used to name the compiled .hex file)
 TARGET = dragon
 
@@ -126,7 +137,15 @@ CPP_FILES += $(TEENSY3)/WString.cpp
 # Use my own main() function
 #CPP_FILES += $(TEENSY3)/main.cpp
 
+# Arduino libraries
 CPP_FILES += $(LIBRARYPATH)/Servo/Servo.cpp
+
+# My files (not including dragon_main.cpp)
+CPP_FILES += ac_alive.cpp
+CPP_FILES += ac_servo.cpp
+CPP_FILES += ac_timer.cpp
+CPP_FILES += ac_printf.cpp
+CPP_FILES += dragon_servos.cpp
 
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 
@@ -160,6 +179,10 @@ bpr: $(TARGET).hex
 	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $<) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
 	-$(abspath $(TOOLSPATH))/teensy_reboot
 
+.PHONY: tags
+tags:
+	rm tags
+	ctags -R `pwd`
 
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
