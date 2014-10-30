@@ -1,5 +1,6 @@
 #include <ac_alive.h>
 #include <ac_timer.h>
+#include <ac_printf.h>
 #include <dragon_pins.h>
 #include <Arduino.h>
 
@@ -13,26 +14,13 @@ void acAliveInit()
 
 void acAliveUpdate()
 {
-#if 0
-Serial.println("Alive xx");
-Serial.flush();
-delay(10);
-
-char buf[100];
-int m = millis();
-snprintf(buf, sizeof(buf), "millis=%d sz(i)=%d", m, (int)sizeof(int));
-Serial.println(buf);
-Serial.flush();
-delay(10);
-#endif
-
-
   uint32_t val;
   if (g_alive_counter.check(&val))
   {
     if (val)
     {
       digitalWrite(dpin_alive_led, HIGH);
+      acPrintf("alive %d\n", millis());
     }
     else
     {

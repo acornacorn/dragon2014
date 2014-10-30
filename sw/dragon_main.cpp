@@ -121,27 +121,7 @@ void doServos()
 
 void loop() 
 {  
-#if 0
-  digitalWrite(dpin_alive_led, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(300);               // wait for a second
-  digitalWrite(dpin_alive_led, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-#endif
-
-  Serial.println("a");
-  Serial.flush();
-  delay(10);
-  yield();
-
-  acPrintf("helloz %d\n", millis());
-
-  //printf("hello\n");
-
-#if 1
   acAliveUpdate();
-#endif
-
-
 
 #if 0
   dragonServoUpdate();

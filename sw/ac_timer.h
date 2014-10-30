@@ -13,6 +13,9 @@ public:
   bool check(uint32_t now_millis);
   bool check();
 
+  // wait for it to fire
+  void wait();
+
 private:
   uint32_t period_;
   uint32_t next_millis_;

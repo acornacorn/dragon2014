@@ -35,6 +35,14 @@ bool AcTimer::check()
   return check(millis());
 }
 
+void AcTimer::wait()
+{
+  while (!check())
+  {
+    delay(1);
+  }
+}
+
 void AcCounter::init(uint32_t period, uint32_t wrap)
 {
   timer_.init(period);
