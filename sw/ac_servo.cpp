@@ -22,9 +22,9 @@ void AcServo::go(
       int val, 
       int duration_millis)
 {
-acPrintf(" go %3d  val=%3d  t=%d\n",val, val_, millis());
   move_duration_millis_ = duration_millis;
   target_ = clamp(val);
+  start_pos_ = val_;
   start_millis_ = millis();
 }
 
@@ -42,7 +42,6 @@ void AcServo::update(uint32_t now_millis)
     }
     if (nval != val_)
     {
-acPrintf(" up %3d  val=%3d  t=%d\n",target_, nval, millis());
       val_ = nval;
       servo_.write(val_);
     }
