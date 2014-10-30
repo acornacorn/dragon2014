@@ -6,6 +6,8 @@ help:
 	@echo "Targets:"
 	@echo "  all   - build .elf and .hex (default target)"
 	@echo "  bpr   - build, program, and run"
+	@echo "  s     - stop (actually loads and runs the blink program)"
+	@echo "  r     - run (reboots teensy)
 	@echo "  tags  - make tags file"
 	@echo "  clean - remove generated files"
 	@echo "  help  - show this help"
@@ -152,7 +154,7 @@ OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 
 # the actual makefile rules (all .o files built by GNU make's default implicit rules)
 
-all: $(TARGET).hex
+all: $(TARGET).hex blink.hex
 
 lib$(TARGET).a: $(OBJS)
 	rm -f $@
@@ -161,6 +163,9 @@ lib$(TARGET).a: $(OBJS)
 
 $(TARGET).elf: lib$(TARGET).a  $(LINKSCRIPT) dragon_main.o
 	$(CC) $(LDFLAGS) -o $@ dragon_main.o lib$(TARGET).a -larm_cortexM4l_math -lm
+
+blink.elf: lib$(TARGET).a  $(LINKSCRIPT) blink_main.o
+	$(CC) $(LDFLAGS) -o $@ blink_main.o lib$(TARGET).a -larm_cortexM4l_math -lm
 
 ###%.hex: %.elf
 ###	$(SIZE) $<
@@ -175,7 +180,19 @@ $(TARGET).elf: lib$(TARGET).a  $(LINKSCRIPT) dragon_main.o
 	@echo ""
 	@echo "Build succeeded.  Type 'make bpr' to program and run."
 
+.PHONY: bpr
 bpr: $(TARGET).hex
+	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $<) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
+	-$(abspath $(TOOLSPATH))/teensy_reboot
+
+.PHONY: run r
+run:
+r:
+	-$(abspath $(TOOLSPATH))/teensy_reboot
+
+.PHONY: stop s
+stop: s
+s: blink.hex
 	$(abspath $(TOOLSPATH))/teensy_post_compile -file=$(basename $<) -path=$(shell pwd) -tools=$(abspath $(TOOLSPATH))
 	-$(abspath $(TOOLSPATH))/teensy_reboot
 
