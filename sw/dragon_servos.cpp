@@ -17,7 +17,7 @@ void dragonServoInit()
   g_reye_servo.init(dpin_reye_servo, 107);  // right eye is pin 16
   g_lips_servo.init(dpin_lips_servo, 107);   // lip is pin 17
 
-  c1.init(1000, 2);
+  c1.init(2000, 2);
 }
 
 void dragonServoUpdate()
@@ -34,12 +34,12 @@ void dragonServoUpdate()
     if (val)
     {
       acPrintf("Down\n");
-      g_look_servo.go(0, 500);
+      g_look_servo.go(0, 1500);
     }
     else
     {
       acPrintf("Up\n");
-      g_look_servo.go(255, 500);
+      g_look_servo.go(255, 1500);
     }
   }
 
