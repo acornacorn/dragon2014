@@ -1,5 +1,6 @@
 #include <ac_servo.h>
 #include <ac_timer.h>
+#include <ac_printf.h>
 #include <dragon_pins.h>
 
 static AcServo g_look_servo;
@@ -32,10 +33,12 @@ void dragonServoUpdate()
   {
     if (val)
     {
+      acPrintf("Down\n");
       g_look_servo.go(0, 500);
     }
     else
     {
+      acPrintf("Up\n");
       g_look_servo.go(255, 500);
     }
   }

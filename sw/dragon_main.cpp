@@ -123,7 +123,7 @@ void loop()
 {  
   acAliveUpdate();
 
-#if 0
+#if 1
   dragonServoUpdate();
 #endif
 
