@@ -7,7 +7,8 @@ help:
 	@echo "  all   - build .elf and .hex (default target)"
 	@echo "  bpr   - build, program, and run"
 	@echo "  s     - stop (actually loads and runs the blink program)"
-	@echo "  r     - run (reboots teensy)
+	@echo "  r     - run (same as bpr)
+	@echo "  reboot- reboot teensy
 	@echo "  tags  - make tags file"
 	@echo "  clean - remove generated files"
 	@echo "  help  - show this help"
@@ -187,7 +188,10 @@ bpr: $(TARGET).hex
 
 .PHONY: run r
 run:
-r:
+r: bpr
+
+.PHONY: reboot
+reboot:
 	-$(abspath $(TOOLSPATH))/teensy_reboot
 
 .PHONY: stop s
