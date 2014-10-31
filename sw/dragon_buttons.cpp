@@ -65,6 +65,7 @@ static void updateButtons()
     }
   }
 
+
   // wait for buttons to settle after startup.  Ignore presses before that.
   static AcTimer startup;
   static int first = 1;
