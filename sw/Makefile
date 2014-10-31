@@ -152,6 +152,7 @@ CPP_FILES += ac_timer.cpp
 CPP_FILES += ac_printf.cpp
 CPP_FILES += dragon_servos.cpp
 CPP_FILES += dragon_buttons.cpp
+CPP_FILES += dragon_leds.cpp
 
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 

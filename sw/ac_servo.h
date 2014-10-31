@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Servo.h>  
+#include <ac_util.h>  
 
 class AcServo
 {
@@ -39,28 +40,8 @@ private:
 
 inline int AcServo::clamp(int val)
 {
-  return val < min_val_ ? min_val_ :
-         val > max_val_ ? max_val_ :
-         val;
+  return acClamp(val, min_val_, max_val_);
 }
-
-
-#if 0
-static inline int my_min(int a, int b)
-{
-  return a < b : a : b;
-}
-
-static inline int my_max(int a, int b)
-{
-  return a > b : a : b;
-}
-
-static inline int my_clamp(int val, int mn, int mx)
-{
-  return min(mx, max(mn, val));
-}
-#endif
 
 
 #endif
