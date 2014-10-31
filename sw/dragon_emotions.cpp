@@ -23,8 +23,8 @@ static Emotion happy =
   .lips = sv_lips_soft_max,
   
   .color1 = COLOR_GREEN,
-  .color2 = COLOR_GREEN2,
-  .color_period = color_pulse_period,
+  .color2 = {180, 119, 0,},
+  .color_period = 3000,
 
   .transition_period = 700,
 };
@@ -36,8 +36,8 @@ static Emotion snarl1 =
   .lips = sv_lips_back_teeth_open,
   
   .color1 = COLOR_ANGRY_RED,
-  .color2 = {80, 0, 0},
-  .color_period = color_pulse_period,
+  .color2 = {40, 0, 0},
+  .color_period = 650,
 
   .transition_period = 600,
 };
@@ -50,7 +50,7 @@ static Emotion snarl2 =
   
   .color1 = COLOR_ANGRY_RED,
   .color2 = COLOR_GOLD,
-  .color_period = color_pulse_period,
+  .color_period = 1000,
 
   .transition_period = 500,
 };
@@ -63,7 +63,7 @@ static Emotion angry1 =
   
   .color1 = COLOR_GOLD,
   .color2 = COLOR_GOLD_ORANGE,
-  .color_period = color_pulse_period,
+  .color_period = 650,
 
   .transition_period = 400,
 };
@@ -74,9 +74,9 @@ static Emotion angry2 =
   .reye = (sv_reye_guarded + sv_reye_angry) / 2,
   .lips = 130,
   
-  .color1 = COLOR_ICE_BLUE,
+  .color1 = COLOR_ICE1,
   .color2 = COLOR_ICE_VERY_BLUE,
-  .color_period = color_pulse_period,
+  .color_period = 650,
 
   .transition_period = 400,
 };
@@ -89,7 +89,7 @@ static Emotion angry3 =
   
   .color1 = COLOR_ANGRY_RED,
   .color2 = COLOR_MAGENTA,
-  .color_period = color_pulse_period / 3,
+  .color_period = 220,
 
   .transition_period = 400,
 };

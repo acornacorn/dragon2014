@@ -98,9 +98,13 @@ private:
 
   Mode setModeInternal(Mode mode);
   void setModeEmotion(Mode mode);
+  void initEmoColors();
+  void updateEmoColors();
 
   Mode mode_;
   const Emotion *emotion_;
+
+  // --- eye color ---
 
   AcCounter eye_color_cnt_;
   bool eye_color_transition_;

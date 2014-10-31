@@ -14,6 +14,7 @@ void Dragon::init()
   initBlink();
   initLook();
   initServos();
+  initEmoColors();
   setMode(MODE_KEY_R);
 }
 
@@ -22,6 +23,7 @@ void Dragon::update()
   updateBlink();
   updateLook();
   updateServos();
+  updateEmoColors();
 }
 
 const char *Dragon::modeString(Mode mode)
@@ -34,6 +36,39 @@ const char *Dragon::modeString(Mode mode)
   if ((int)mode >= 0 && (int)mode < (int)ARRAY_SIZE(str))
     return str[mode];
   return "???";
+}
+
+void Dragon::initEmoColors()
+{
+  eye_color_cnt_.init(1000, 2);
+}
+
+void Dragon::updateEmoColors()
+{
+  uint32_t val;
+  if (emotion_ && eye_color_cnt_.check(&val))
+  {
+    if (eye_color_transition_)
+    {
+      eye_color_cnt_.init(emotion_->color_period, 2);
+      val = 0;
+      eye_color_transition_ = false;
+    }
+    if (val)
+    {
+      dragonLedColorShiftTo(emotion_->color1[0],
+                        emotion_->color1[1],
+                        emotion_->color1[2],
+                        emotion_->color_period);
+    }
+    else
+    {
+      dragonLedColorShiftTo(emotion_->color2[0],
+                        emotion_->color2[1],
+                        emotion_->color2[2],
+                        emotion_->color_period);
+    }
+  }
 }
 
 void Dragon::setModeEmotion(Mode mode)
