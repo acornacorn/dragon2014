@@ -107,6 +107,7 @@ const Emotion *getEmotion(Dragon::Mode mode)
   case Dragon::MODE_ANGRY3: return &angry3;
 
   case Dragon::MODE_TEST:
+  case Dragon::MODE_BUT_SERVO_LIMITS:
   case Dragon::MODE_KEY_LEYE:
   case Dragon::MODE_KEY_REYE:
   case Dragon::MODE_KEY_LOOK:

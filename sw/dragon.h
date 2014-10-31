@@ -21,6 +21,7 @@ public:
   #define DRAGON_MODE_STRINGS \
             "Test", \
                     \
+            "button_servo_limits", \
             "Leye", \
             "Reye", \
             "Look", \
@@ -42,13 +43,14 @@ public:
     // TEST modes must come before KEY modes
     LAST_TEST_MODE = MODE_TEST,
 
-    MODE_KEY_LEYE,
-    MODE_KEY_REYE,
-    MODE_KEY_LOOK,
-    MODE_KEY_LIPS,
-    MODE_KEY_R,
-    MODE_KEY_G,
-    MODE_KEY_B,
+    MODE_BUT_SERVO_LIMITS, // buttons control servos to extremes
+    MODE_KEY_LEYE,      // keybpoard controls leye servo
+    MODE_KEY_REYE,      // keybpoard controls reye servo
+    MODE_KEY_LOOK,      // keybpoard controls look servo
+    MODE_KEY_LIPS,      // keybpoard controls lips servo
+    MODE_KEY_R,         // keybpoard controls red
+    MODE_KEY_G,         // keybpoard controls green
+    MODE_KEY_B,         // keybpoard controls blue
 
     // KEY modes must come before real modes
     LAST_KEY_MODE = MODE_KEY_B,
@@ -83,6 +85,15 @@ public:
 
   // increment or decrement based on mode
   void debugIncrement(int inc);
+
+  // toggle servo between min and max
+  // mode selects servo:
+  //     MODE_KEY_LEYE,
+  //     MODE_KEY_REYE,
+  //     MODE_KEY_LOOK,
+  //     MODE_KEY_LIPS,
+  //
+  void debugToggleServo(Mode servo);
 
 private:
   void initBlink();

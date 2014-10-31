@@ -14,6 +14,7 @@ static const int DEBOUNCE_TIME_MS = 20;
 static Bounce* g_buttons[BUTTON_CNT];
 bool g_buttons_changed[BUTTON_CNT];
 bool g_buttons_value[BUTTON_CNT];
+bool g_buttons_press[BUTTON_CNT];
 
 AcCounter g_help_cnt;
 bool g_show_help = false;
@@ -25,6 +26,7 @@ bool g_show_help = false;
     g_buttons[index] = &but##index; \
     g_buttons_changed[index] = false; \
     g_buttons_value[index] = false; \
+    g_buttons_press[index] = false; \
     pinMode(dpin_button##index, INPUT_PULLUP); \
   } while(0)
 
@@ -51,6 +53,7 @@ static void updateButtons()
   {
     g_buttons_changed[i] = g_buttons[i]->update();
     g_buttons_value[i] = !g_buttons[i]->read();
+    g_buttons_press[i] = g_buttons_changed[i] && g_buttons_value[i];
 
     if (g_buttons_changed[i] || g_buttons_value[i])
     {
@@ -106,9 +109,39 @@ static void updateButtons()
   // right blink      BUT_RIGHT_BLINK
   // left blink       BUT_LEFT_BLINK
   // toggle autoblink BUT_LEFT_BLINK + BUT_RIGHT_BLINK
+  //
+  // toggle debug mode BUT_DEBUG_TOG
 
   static bool both_look = false;
   static bool both_blink = false;
+
+  // toggle DEBUG modes
+  if (g_buttons_press[BUT_DEBUG_TOG])
+  {
+    if (g_dragon.getMode() == Dragon::MODE_BUT_SERVO_LIMITS)
+      g_dragon.setMode(Dragon::MODE_HAPPY);
+    else
+      g_dragon.setMode(Dragon::MODE_BUT_SERVO_LIMITS);
+  }
+
+  // MODE_BUT_SERVO_LIMITS mode
+  if (g_dragon.getMode() == Dragon::MODE_BUT_SERVO_LIMITS)
+  {
+    both_look = false;
+    both_blink = false;
+
+    if (g_buttons_press[BUT_LEFT_BLINK])
+      g_dragon.debugToggleServo(Dragon::MODE_KEY_LEYE);
+    if (g_buttons_press[BUT_RIGHT_BLINK])
+      g_dragon.debugToggleServo(Dragon::MODE_KEY_REYE);
+    if (g_buttons_press[BUT_LOOK_LEFT])
+      g_dragon.debugToggleServo(Dragon::MODE_KEY_LOOK);
+    if (g_buttons_press[BUT_LOOK_RIGHT])
+      g_dragon.debugToggleServo(Dragon::MODE_KEY_LIPS);
+    return;
+  }
+
+
 
   // DETECT BUTTON PAIRS
   if (g_buttons_value[BUT_LOOK_LEFT] &&
@@ -128,14 +161,12 @@ static void updateButtons()
     both_blink = true;
   }
 
-  if (g_buttons_changed[BUT_EMO_INC] &&
-      g_buttons_value[BUT_EMO_INC])
+  if (g_buttons_press[BUT_EMO_INC])
   {
     g_dragon.incEmotion(1);
   }
 
-  if (g_buttons_changed[BUT_EMO_DEC] &&
-      g_buttons_value[BUT_EMO_DEC])
+  if (g_buttons_press[BUT_EMO_DEC])
   {
     g_dragon.incEmotion(-1);
   }

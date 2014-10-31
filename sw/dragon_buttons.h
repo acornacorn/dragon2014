@@ -18,7 +18,7 @@ enum {
   BUT_LEFT_BLINK = BUT0,
   BUT_RIGHT_BLINK = BUT1,
 
-  // unused: BUT2
+  BUT_DEBUG_TOG = BUT2,
   // unused: BUT3
 
   BUT_EMO_INC = BUT4,
@@ -30,5 +30,6 @@ enum {
 
 extern bool g_buttons_changed[BUTTON_CNT];
 extern bool g_buttons_value[BUTTON_CNT];
+extern bool g_buttons_press[BUTTON_CNT];
 
 #endif

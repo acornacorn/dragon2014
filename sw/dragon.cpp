@@ -96,6 +96,7 @@ Dragon::Mode Dragon::setModeInternal(Mode mode)
     mode = MODE_TEST;
     // fall thru
   case MODE_TEST:
+  case MODE_BUT_SERVO_LIMITS:
   case MODE_KEY_LEYE:
   case MODE_KEY_REYE:
   case MODE_KEY_LOOK:
@@ -234,6 +235,9 @@ void Dragon::updateBlink()
     startBlink();
   }
 
+  if (mode_ == MODE_BUT_SERVO_LIMITS)
+    return;
+
   static const int EYE_CLOSE_DURATION = 0;
   static const int EYE_OPEN_DURATION = 0;
 
@@ -326,6 +330,39 @@ void Dragon::updateLook()
 }
 
 
+
+void Dragon::debugToggleServo(Mode servo)
+{
+  AcServo *s = NULL;
+  switch(servo)
+  {
+  case MODE_KEY_LEYE:
+    s = &sv_leye_;
+    break;
+  case MODE_KEY_REYE:
+    s = &sv_reye_;
+    break;
+  case MODE_KEY_LOOK:
+    s = &sv_look_;
+    break;
+  case MODE_KEY_LIPS:
+    s = &sv_lips_;
+    break;
+  default:
+    return;
+  }
+
+
+  int val = s->getValue();
+  if (val > 107)
+    val = 0;
+  else
+    val = 255;
+
+  s->go(val, 400);
+  acPrintf("Toggle servo %s to %d\n",
+    modeString(servo), val);
+}
 
 void Dragon::debugIncrement(int inc)
 {
