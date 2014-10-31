@@ -5,10 +5,10 @@ void dragonLedInit();
 void dragonLedUpdate();
 
 // set color immediately
-void dragonLedColor(int r, int g, int b);
+void dragonLedColorSet(int r, int g, int b);
 
 // transition to color over duration milliseconds
-void dragonLedColorShift(int r, int g, int b, int duration_millis);
+void dragonLedColorShiftTo(int r, int g, int b, int duration_millis);
 
 
 #endif

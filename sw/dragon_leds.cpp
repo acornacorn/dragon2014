@@ -1,52 +1,49 @@
 #include <dragon_leds.h>
 #include <dragon_pins.h>
 #include <ac_printf.h>
-#include <ac_util.h>
+#include <ac_led_rgb.h>
 #include <Arduino.h>
 
+static const bool DEBUG_LEDS = true;
 
-static const bool DEBUG_LEDS = false;
-
-
-int g_r;
-int g_g;
-int g_b;
+static AcLedRgb g_eyes;
 
 void dragonLedInit()
 {
-  pinMode(dpin_eye_red, OUTPUT);
-  pinMode(dpin_eye_green, OUTPUT);
-  pinMode(dpin_eye_blue, OUTPUT);
+  g_eyes.init(dpin_eye_red, dpin_eye_green, dpin_eye_blue);
 
-  dragonLedColor(0,0,255);
+  g_eyes.set(0,0,255);
+  g_eyes.shiftTo(255,10,10, 1000);
 }
 
-void dragonLedColor(
+void dragonLedColorSet(
   int r,
   int g,
   int b)
 {
-  g_r = acClamp(r, 0, 255);
-  g_g = acClamp(g, 0, 255);
-  g_b = acClamp(b, 0, 255);
-  analogWrite(dpin_eye_red, g_r);
-  analogWrite(dpin_eye_green, g_g);
-  analogWrite(dpin_eye_blue, g_b);
+  g_eyes.set(r,g,b);
+
   if (DEBUG_LEDS)
-    acPrintf("Color: %d %d %d\n",g_r,g_g,g_b);
+    acPrintf("Color: %d %d %d\n",r,g,b);
 }
 
-void dragonLedColorShift(
+void dragonLedColorShiftTo(
   int r,
   int g,
   int b,
   int duration_millis)
 {
-  dragonLedColor(r,g,b);
+  g_eyes.shiftTo(r,g,b,duration_millis);
+
+  if (DEBUG_LEDS)
+  {
+    acPrintf("Color: shift to %d %d %d  dur=%d\n",
+      r,g,b,duration_millis);
+  }
 }
 
 void dragonLedUpdate()
 {
-  dragonLedColorShift(10,10,10, 1000);
+  g_eyes.update();
 }
 
