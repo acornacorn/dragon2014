@@ -56,7 +56,7 @@ static const int sv_reye_closed = 71;
 
 //================ LIPS
 
-static const int sv_lips_min = 59;    // open
+static const int sv_lips_min = 76;    // open
 static const int sv_lips_mid = 160;
 static const int sv_lips_max = 178;  // closed
 
@@ -65,7 +65,7 @@ static const int sv_lips_back_teeth_closed = 162;
 static const int sv_lips_back_teeth_open = 136;
 
 static const int sv_lips_nose_closed = 136;
-static const int sv_lips_nose_open = 63;
+static const int sv_lips_nose_open = 78;
 
 
 
@@ -95,6 +95,7 @@ static const int apin_eye_blue = 9;
 // other colors (not tested)
 #define COLOR_GREEN2             C(0,50,0)
 
+//static const int color_pulse_period = 650;
 static const int color_pulse_period = 650;
 
 // buttons
