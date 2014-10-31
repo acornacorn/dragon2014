@@ -16,8 +16,6 @@ void dragonLedInit()
 {
   g_eyes.init(dpin_eye_red, dpin_eye_green, dpin_eye_blue);
 
-  //dragonLedColorSet(0,0,255);
-  //dragonLedColorShiftTo(255,10,10, 1000);
   g_led_tst_cnt.init(1000, 6);
 }
 

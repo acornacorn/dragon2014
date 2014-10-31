@@ -22,7 +22,8 @@ void setup()
 
   g_dragon.init();
 
-  g_dragon.setMode(Dragon::MODE_TEST);
+  //g_dragon.setMode(Dragon::MODE_TEST);
+  g_dragon.setMode(Dragon::MODE_KEY_R);
 
   //Serial.println("HelloA");
   //acPrintf("HelloB");

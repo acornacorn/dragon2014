@@ -75,7 +75,7 @@ static const char *help[] =
     "  - - prev mode",
     "  = - next mode",
     "  p - happy",
-    "  a - angry\n",
+    "  a - angry",
     0,
 };
 
@@ -109,7 +109,10 @@ static void parseKey(int c)
   int inc = 0;
   switch(c)
   {
+  case 'H':
   case 'h':
+  case '/':
+  case '?':
     startHelp();
     break;
   case 'l':

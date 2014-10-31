@@ -14,11 +14,15 @@ public:
 
   #define DRAGON_MODE_STRINGS \
             "Test", \
-            "DEBUG Leye", \
-            "DEBUG Reye", \
-            "DEBUG Look", \
-            "DEBUG Lips", \
-            "DEBUG Color", \
+                    \
+            "Leye", \
+            "Reye", \
+            "Look", \
+            "Lips", \
+            "Red", \
+            "Green", \
+            "Blue", \
+                    \
             "Happy", \
             "Snarl", \
             "Angry1", \
