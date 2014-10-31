@@ -4,6 +4,7 @@
 #include <dragon_pins.h>
 #include <dragon_buttons.h>
 #include <dragon_leds.h>
+#include <dragon_emotions.h>
 #include <stdint.h>
 
 static const bool DEBUG_BLINK = true;
@@ -11,12 +12,15 @@ static const bool DEBUG_BLINK = true;
 void Dragon::init()
 {
   initBlink();
+  initLook();
   initServos();
+  setMode(MODE_KEY_R);
 }
 
 void Dragon::update()
 {
   updateBlink();
+  updateLook();
   updateServos();
 }
 
@@ -30,6 +34,23 @@ const char *Dragon::modeString(Mode mode)
   if ((int)mode >= 0 && (int)mode < (int)ARRAY_SIZE(str))
     return str[mode];
   return "???";
+}
+
+void Dragon::setModeEmotion(Mode mode)
+{
+  emotion_ = getEmotion(mode);
+
+  dragonLedColorShiftTo(emotion_->color1[0],
+                        emotion_->color1[1],
+                        emotion_->color1[2],
+                        emotion_->transition_period);
+
+  eye_color_cnt_.init(emotion_->transition_period, 2);
+  eye_color_transition_ = true;
+
+  sv_leye_.go(emotion_->leye, emotion_->transition_period);
+  sv_reye_.go(emotion_->reye, emotion_->transition_period);
+  sv_lips_.go(emotion_->lips, emotion_->transition_period);
 }
 
 Dragon::Mode Dragon::setModeInternal(Mode mode)
@@ -50,12 +71,13 @@ Dragon::Mode Dragon::setModeInternal(Mode mode)
     return mode;
 
   case MODE_HAPPY:
-    return mode;
-  case MODE_SNARL:
-    return mode;
+  case MODE_SNARL1:
+  case MODE_SNARL2:
   case MODE_ANGRY1:
+  case MODE_ANGRY2:
+  case MODE_ANGRY3:
+    setModeEmotion(mode);
     return mode;
-
   }
 
   return MODE_TEST;
@@ -72,6 +94,13 @@ void Dragon::setMode(Mode mode)
 
   acPrintf("Switch to mode %s\n", modeString(mode));
   mode_ = mode;
+}
+
+void Dragon::incEmotion(int inc)
+{
+  int mode = mode_ + inc;
+  mode = acClamp(mode, MODE_FIRST_EMOTION, MODE_LAST_EMOTION);
+  setMode((Dragon::Mode)mode);
 }
 
 void Dragon::setEyePos(int left, int right, int duration_millis)
@@ -161,7 +190,7 @@ void Dragon::updateBlink()
   static const int EYE_CLOSE_DURATION = 0;
   static const int EYE_OPEN_DURATION = 0;
 
-  if (in_blink_ || g_buttons_value[BUT_LEYE])
+  if (in_blink_ || g_buttons_value[BUT_LEFT_BLINK])
   {
     if (!l_eye_close_)
     {
@@ -175,7 +204,7 @@ void Dragon::updateBlink()
     l_eye_close_ = false;
   }
 
-  if (in_blink_ || g_buttons_value[BUT_REYE])
+  if (in_blink_ || g_buttons_value[BUT_RIGHT_BLINK])
   {
     if (!r_eye_close_)
     {
@@ -187,6 +216,55 @@ void Dragon::updateBlink()
   {
     sv_reye_.go(r_eye_pos_, EYE_OPEN_DURATION);
     r_eye_close_ = false;
+  }
+}
+
+void Dragon::look(int val, bool compensate)
+{
+  int old = sv_look_.getValue();
+
+  if (compensate && old < val)
+  {
+    val += 4;
+  }
+  if (compensate && old > val)
+  {
+    val -= 4;
+  }
+
+  sv_look_.go(val, 0);
+
+  // backoff backs the servo off after a while to minimize noise and power
+
+  look_backoff_ = val;
+
+  if (old < val)
+  {
+    look_backoff_ = val - sv_look_backoff;
+    look_backoff_ = acMax(look_backoff_, old);
+  }
+  else if (old > val)
+  {
+    look_backoff_ = val + sv_look_backoff;
+    look_backoff_ = acMin(look_backoff_, old);
+  }
+
+  look_backoff_ = acClamp(look_backoff_, sv_look_min_ss, sv_look_max_ss);
+
+  look_backoff_timer_.init(200);
+}
+
+void Dragon::initLook()
+{
+  look(sv_look_mid, false);
+}
+
+void Dragon::updateLook()
+{
+  if (look_backoff_ && look_backoff_timer_.check())
+  {
+    sv_look_.go(look_backoff_, 0);
+    look_backoff_ = 0;
   }
 }
 

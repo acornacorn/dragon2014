@@ -57,6 +57,100 @@ static void updateButtons()
         g_buttons_value[i] ? "Pressed" : "Released");
     }
   }
+
+  // look left        BUT_LOOK_LEFT
+  // look right       BUT_LOOK_RIGHT
+  // look all over    BUT_LOOK_LEFT + BUT_LOOK_RIGHT
+  //
+  // emption+         BUT_EMO_INC
+  // emotion-         BUT_EMO_DEC
+  //
+  // right blink      BUT_RIGHT_BLINK
+  // left blink       BUT_LEFT_BLINK
+  // toggle autoblink BUT_LEFT_BLINK + BUT_RIGHT_BLINK
+
+  static bool both_look = false;
+  static bool both_blink = false;
+
+  // DETECT BUTTON PAIRS
+  if (g_buttons_value[BUT_LOOK_LEFT] &&
+      g_buttons_value[BUT_LOOK_RIGHT])
+  {
+    both_look = true;
+  }
+  if (g_buttons_value[BUT_RIGHT_BLINK] &&
+      g_buttons_value[BUT_LEFT_BLINK])
+  {
+    // TOGGLE AUTO BLINK
+    if (!both_blink)
+    {
+      g_dragon.enableBlink(!g_dragon.getEnableBlink());
+    }
+
+    both_blink = true;
+  }
+
+  if (g_buttons_changed[BUT_EMO_INC] &&
+      g_buttons_value[BUT_EMO_INC])
+  {
+    g_dragon.incEmotion(1);
+  }
+
+  if (g_buttons_changed[BUT_EMO_DEC] &&
+      g_buttons_value[BUT_EMO_DEC])
+  {
+    g_dragon.incEmotion(-1);
+  }
+
+  // NOTE: Blinking is handled in Dragon::updateBlink()
+
+  // LOOK LEFT
+  if (g_buttons_changed[BUT_LOOK_LEFT])
+  {
+    if (both_look)
+    {
+      g_dragon.look(sv_look_mid, true);
+      // TODO: enable auto looking around mode
+    }
+    else if (g_buttons_value[BUT_LOOK_LEFT])
+    {
+      g_dragon.look(sv_look_left, false);
+    }
+    else
+    {
+      g_dragon.look(sv_look_mid, true);
+    }
+  }
+
+  // LOOK RIGHT
+  if (g_buttons_changed[BUT_LOOK_RIGHT])
+  {
+    if (both_look)
+    {
+      g_dragon.look(sv_look_mid, true);
+      // TODO: enable auto looking around mode
+    }
+    else if (g_buttons_value[BUT_LOOK_RIGHT])
+    {
+      g_dragon.look(sv_look_right, false);
+    }
+    else
+    {
+      g_dragon.look(sv_look_mid, true);
+    }
+  }
+
+  // DETECT BUTTON PAIRS
+  if (!g_buttons_value[BUT_LOOK_LEFT] &&
+      !g_buttons_value[BUT_LOOK_RIGHT])
+  {
+    both_look = false;
+  }
+  if (!g_buttons_value[BUT_RIGHT_BLINK] &&
+      !g_buttons_value[BUT_LEFT_BLINK])
+  {
+    both_blink = false;
+  }
 }
 
 static const char *help[] = 

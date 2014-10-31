@@ -1,3 +1,8 @@
+static void dummy()
+{
+}
+
+#if 0
 #include <ac_servo.h>
 #include <ac_counter.h>
 #include <ac_printf.h>
@@ -55,3 +60,4 @@ void dragonServoUpdate()
   }
 #endif
 }
+#endif

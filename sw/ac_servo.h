@@ -23,6 +23,8 @@ public:
   void update(uint32_t now_millis);
   void update();
 
+  int getValue() { return val_; }
+
   // inc/dec for debug
   void debugIncrement(int inc);
 

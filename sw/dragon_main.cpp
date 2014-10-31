@@ -16,7 +16,7 @@ void setup()
   Serial.begin(38400);
 
   acAliveInit();
-  dragonServoInit();
+  //dragonServoInit();
   dragonButtonInit();
   dragonLedInit();
 
@@ -32,7 +32,7 @@ void setup()
 void loop() 
 {  
   acAliveUpdate();
-  dragonServoUpdate();
+  //dragonServoUpdate();
   dragonButtonUpdate();
   dragonLedUpdate();
   g_dragon.update();

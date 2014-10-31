@@ -5,12 +5,18 @@
 #include <ac_timer.h>
 #include <ac_counter.h>
 
+struct Emotion;
+
 class Dragon
 {
 public:
   void init();
 
   void update();
+
+  // look in this direction (val is a look servo value)
+  // if compensate then try to compensate for the direction we come from
+  void look(int val, bool compensate);
 
   #define DRAGON_MODE_STRINGS \
             "Test", \
@@ -24,8 +30,11 @@ public:
             "Blue", \
                     \
             "Happy", \
-            "Snarl", \
+            "Snarl1", \
+            "Snarl2", \
             "Angry1", \
+            "Angry2", \
+            "Angry3", \
 
   enum Mode {
     MODE_TEST,
@@ -45,19 +54,32 @@ public:
     LAST_KEY_MODE = MODE_KEY_B,
 
     MODE_HAPPY,
-    MODE_SNARL,
+    MODE_SNARL1,
+    MODE_SNARL2,
     MODE_ANGRY1,
+    MODE_ANGRY2,
+    MODE_ANGRY3,
 
     MODE_CNT,
+
+    MODE_FIRST_EMOTION = MODE_HAPPY,
+    MODE_LAST_EMOTION = MODE_ANGRY3,
+
   };
 
   void setMode(Mode mode);
   Mode getMode() { return mode_; }
   static const char *modeString(Mode mode);
 
+  // increment/decrement the emotion mode
+  void incEmotion(int inc);
+
   void setEyePos(int left, int right, int duration_millis);
 
   void enableBlink(bool enable);
+  bool getEnableBlink() { return blink_enable_; }
+
+  
 
   // increment or decrement based on mode
   void debugIncrement(int inc);
@@ -68,12 +90,22 @@ private:
   void startBlink();
   void endBlink();
 
+  void initLook();
+  void updateLook();
+
   void initServos();
   void updateServos();
 
   Mode setModeInternal(Mode mode);
+  void setModeEmotion(Mode mode);
 
   Mode mode_;
+  const Emotion *emotion_;
+
+  AcCounter eye_color_cnt_;
+  bool eye_color_transition_;
+
+  // --- blink ---
 
   // position of each eye, not counting blink
   int l_eye_pos_;
@@ -86,6 +118,13 @@ private:
   bool in_blink_;
   int blink_index_;
   AcTimer blink_timer_;
+
+  // --- look ---
+
+  int look_backoff_;
+  AcTimer look_backoff_timer_;
+
+  // --- servos ---
 
   AcServo sv_look_;
   AcServo sv_leye_;

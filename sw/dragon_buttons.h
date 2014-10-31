@@ -15,8 +15,17 @@ enum {
   BUT7,
   BUTTON_CNT,
 
-  BUT_LEYE = BUT0,
-  BUT_REYE = BUT1,
+  BUT_LEFT_BLINK = BUT0,
+  BUT_RIGHT_BLINK = BUT1,
+
+  // unused: BUT2
+  // unused: BUT3
+
+  BUT_EMO_INC = BUT4,
+  BUT_EMO_DEC = BUT5,
+
+  BUT_LOOK_LEFT = BUT6,
+  BUT_LOOK_RIGHT = BUT7,
 };
 
 extern bool g_buttons_changed[BUTTON_CNT];

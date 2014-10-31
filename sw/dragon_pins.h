@@ -22,6 +22,9 @@ static const int sv_look_max_ss = 110; // left
 static const int sv_look_mid_from_r = 97;
 static const int sv_look_mid_from_l = 89;
 
+static const int sv_look_left = 110;
+static const int sv_look_right = 82;
+
 // back off by this amount to avoid jitter
 static const int sv_look_backoff = 4;
 
@@ -89,6 +92,10 @@ static const int apin_eye_blue = 9;
 #define COLOR_SICKLY            C(255,219,0)
 #define COLOR_WHITE             C(255,219,103)
 
+// other colors (not tested)
+#define COLOR_GREEN2             C(0,50,0)
+
+static const int color_pulse_period = 650;
 
 // buttons
 static const int dpin_button0 = 12;
