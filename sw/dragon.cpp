@@ -179,31 +179,43 @@ static uint16_t g_blink_times[] =
 
 void Dragon::initBlink()
 {
+acPrintf("enter initBlnk\n");
   enableBlink(true);
+acPrintf("exit initBlnk\n");
 }
 
 void Dragon::enableBlink(bool enable)
 {
+acPrintf("enter enableBlink %d -> %d\n",blink_enable_, enable);
   blink_enable_ = enable;
+acPrintf("enter2 enableBlink %d -> %d\n",blink_enable_, enable);
   blink_index_ = 0;
+acPrintf("enter3 enableBlink %d -> %d\n",blink_enable_, enable);
   endBlink();
+acPrintf("exit enableBlink(%d)\n",blink_enable_);
 }
 
 void Dragon::startBlink()
 {
+//acPrintf("startBlink\n");
   // how long eyes stay closed
-  static const int BLINK_TIME = 20;
+  static const int BLINK_TIME = 200;
   blink_timer_.init(BLINK_TIME);
   in_blink_ = true;
 }
 
 void Dragon::endBlink()
 {
+//acPrintf("enter1 endBlink  idx=%d enab=%d\n",blink_index_,blink_enable_);
   in_blink_ = false;
+//acPrintf("enter2 endBlink  idx=%d enab=%d\n",blink_index_,blink_enable_);
   blink_index_++;
+//acPrintf("enter3 endBlink  idx=%d enab=%d\n",blink_index_,blink_enable_);
   if (blink_index_ >= (int)ARRAY_SIZE(g_blink_times))
     blink_index_ = 0;
+//acPrintf("enter4 endBlink  idx=%d enab=%d\n",blink_index_,blink_enable_);
   blink_timer_.init(g_blink_times[blink_index_]);
+//acPrintf("exit endBlink  idx=%d enab=%d\n",blink_index_,blink_enable_);
 }
 
 void Dragon::updateBlink()

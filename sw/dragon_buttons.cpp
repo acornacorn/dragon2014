@@ -45,10 +45,17 @@ static void initButtons()
 
 static void updateButtons()
 {
+  bool none = true;
+
   for (int i = 0 ; i < BUTTON_CNT ; ++i)
   {
     g_buttons_changed[i] = g_buttons[i]->update();
     g_buttons_value[i] = !g_buttons[i]->read();
+
+    if (g_buttons_changed[i] || g_buttons_value[i])
+    {
+      none = false;
+    }
 
     if (DEBUG_BUTTONS && g_buttons_changed[i])
     {
@@ -57,6 +64,36 @@ static void updateButtons()
         g_buttons_value[i] ? "Pressed" : "Released");
     }
   }
+
+  // wait for buttons to settle after startup.  Ignore presses before that.
+  static AcTimer startup;
+  static int first = 1;
+  if (first)
+  {
+    if (none)
+    {
+      first = 0;
+      acPrintf("Buttons OK\n");
+    }
+    else if (first == 1)
+    {
+      startup.init(1000);
+      first = 2;
+    }
+    else if (startup.check())
+    {
+      first = 0;
+      acPrintf("Buttons TIMED OUT\n");
+    }
+
+    for (int i = 0 ; i < BUTTON_CNT ; ++i)
+    {
+      g_buttons_changed[i] = false;
+      g_buttons_value[i] = false;
+    }
+    return;
+  }
+
 
   // look left        BUT_LOOK_LEFT
   // look right       BUT_LOOK_RIGHT

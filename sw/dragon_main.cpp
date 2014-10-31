@@ -16,6 +16,10 @@ void setup()
   Serial.begin(38400);
 
   acAliveInit();
+
+  delay(1000);
+  acPrintf("BOOT\n");
+
   //dragonServoInit();
   dragonButtonInit();
   dragonLedInit();
