@@ -256,7 +256,12 @@ void Dragon::updateBlink()
 
 void Dragon::look(int val, bool compensate)
 {
+  if (mode_ == MODE_KEY_LOOK)
+    return;
+
   int old = sv_look_.getValue();
+
+acPrintf("Look %d -> %d         (%d)\n",old,val, compensate);
 
   if (compensate && old < val)
   {
@@ -296,6 +301,11 @@ void Dragon::initLook()
 
 void Dragon::updateLook()
 {
+  if (mode_ == MODE_KEY_LOOK)
+  {
+    look_backoff_ = 0;
+    return;
+  }
   if (look_backoff_ && look_backoff_timer_.check())
   {
     sv_look_.go(look_backoff_, 0);

@@ -6,7 +6,7 @@
 #include <ac_counter.h>
 #include <Arduino.h>
 
-static const bool DEBUG_LEDS = true;
+static const bool DEBUG_LEDS = false;
 
 AcLedRgb g_eyes;
 
