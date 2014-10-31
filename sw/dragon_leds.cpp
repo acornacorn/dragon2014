@@ -7,17 +7,23 @@
 
 static const bool DEBUG_LEDS = true;
 
+#define TEST_LEDS 0
+
 static AcLedRgb g_eyes;
+
+#if TEST_LEDS
 static AcCounter c1;
+#endif
 
 void dragonLedInit()
 {
   g_eyes.init(dpin_eye_red, dpin_eye_green, dpin_eye_blue);
 
+#if TEST_LEDS
   dragonLedColorSet(0,0,255);
   dragonLedColorShiftTo(255,10,10, 1000);
-
   c1.init(1000, 6);
+#endif
 }
 
 void dragonLedColorSet(
@@ -51,6 +57,7 @@ void dragonLedUpdate()
 {
   g_eyes.update();
 
+#if TEST_LEDS
   uint32_t val;
   if (c1.check(&val))
   {
@@ -64,5 +71,6 @@ void dragonLedUpdate()
     case 5: dragonLedColorShiftTo(0,255,255,500); break;
     }
   }
+#endif
 }
 
