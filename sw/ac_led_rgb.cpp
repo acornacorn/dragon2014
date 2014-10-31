@@ -1,5 +1,6 @@
 #include <ac_led_rgb.h>
 #include <ac_util.h>
+#include <ac_printf.h>
 #include <Arduino.h>
 
 void AcLedRgb::init(
@@ -91,3 +92,16 @@ void AcLedRgb::update()
       write();
   }
 }
+
+void AcLedRgb::debugIncrement(
+      int chan,
+      int inc)
+{
+  if ((uint32_t)chan < 3)
+  {
+    val_[chan] = acClamp(val_[chan] + inc, 0, 255);
+    acPrintf("Value = %d\n", (int)val_[chan]);
+    set(val_[R], val_[G], val_[B]);
+  }
+}
+

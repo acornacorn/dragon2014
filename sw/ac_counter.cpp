@@ -5,6 +5,7 @@ void AcCounter::init(uint32_t period, uint32_t wrap)
 {
   timer_.init(period);
   wrap_ = wrap;
+  val_ = 0;
 }
 
 bool AcCounter::check(uint32_t* val)

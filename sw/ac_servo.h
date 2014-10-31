@@ -23,6 +23,9 @@ public:
   void update(uint32_t now_millis);
   void update();
 
+  // inc/dec for debug
+  void debugIncrement(int inc);
+
 private:
   int clamp(int val);
 

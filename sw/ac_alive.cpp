@@ -7,6 +7,7 @@
 static const bool ALIVE_PRINTF = true;
 
 static AcCounter g_alive_counter;
+static int g_alive_print_cnt = 0;
 
 void acAliveInit()
 {
@@ -23,7 +24,14 @@ void acAliveUpdate()
     {
       digitalWrite(dpin_alive_led, HIGH);
       if (ALIVE_PRINTF)
-        acPrintf("alive %d\n", millis());
+      {
+        g_alive_print_cnt++;
+        if (g_alive_print_cnt > 10)
+        {
+          g_alive_print_cnt = 0;
+          acPrintf("alive %d\n", millis());
+        }
+      }
     }
     else
     {

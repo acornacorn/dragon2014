@@ -1,5 +1,6 @@
 #include <dragon_buttons.h>
 #include <dragon_pins.h>
+#include <dragon.h>
 #include <ac_printf.h>
 #include <Arduino.h>
 #include <Bounce.h>
@@ -10,20 +11,12 @@ static const bool DEBUG_BUTTONS = true;
 static const int DEBOUNCE_TIME_MS = 20;
 
 
-
-static const int BUTTON_CNT = 8;
 static Bounce* g_buttons[BUTTON_CNT];
 bool g_buttons_changed[BUTTON_CNT];
 bool g_buttons_value[BUTTON_CNT];
 
-static void initButton(
-      int index,
-      int pin,
-      Bounce *bounce)
-{
-  g_buttons[index] = bounce;
-  g_buttons_changed[index] = false;
-}
+AcCounter g_help_cnt;
+bool g_show_help = false;
 
 #define INIT_BUTTON(index) \
   do \
@@ -45,6 +38,9 @@ static void initButtons()
   INIT_BUTTON(5);
   INIT_BUTTON(6);
   INIT_BUTTON(7);
+
+  g_show_help = false;
+  g_help_cnt.init(10, 2);
 }
 
 static void updateButtons()
@@ -63,9 +59,111 @@ static void updateButtons()
   }
 }
 
+static const char *help[] = 
+{
+    "",
+    "  __HELP__",
+    "  l - leye servo",
+    "  r - reye servo",
+    "  o - look servo",
+    "  i - lips servo",
+    "  R - red",
+    "  G - green",
+    "  B - blue",
+    "  , - decrement",
+    "  . - increment",
+    "  - - prev mode",
+    "  = - next mode",
+    "  p - happy",
+    "  a - angry\n",
+    0,
+};
+
+static void startHelp()
+{
+  g_show_help = true;
+  g_help_cnt.init(11, 1000);
+}
+
+static void updateHelp()
+{
+  if (g_show_help)
+  {
+    uint32_t val;
+    if (g_help_cnt.check(&val))
+    {
+      if (help[val] == 0)
+      {
+        g_show_help = false;
+      }
+      else
+      {
+        acPrintf("%s\n", help[val]);
+      }
+    }
+  }
+}
+
 static void parseKey(int c)
 {
+  int inc = 0;
+  switch(c)
+  {
+  case 'h':
+    startHelp();
+    break;
+  case 'l':
+    g_dragon.setMode(Dragon::MODE_KEY_LEYE);
+    break;
+  case 'r':
+    g_dragon.setMode(Dragon::MODE_KEY_REYE);
+    break;
+  case 'o':
+    g_dragon.setMode(Dragon::MODE_KEY_LOOK);
+    break;
+  case 'i':
+    g_dragon.setMode(Dragon::MODE_KEY_LIPS);
+    break;
+  case 'R':
+    g_dragon.setMode(Dragon::MODE_KEY_R);
+    break;
+  case 'G':
+    g_dragon.setMode(Dragon::MODE_KEY_G);
+    break;
+  case 'B':
+    g_dragon.setMode(Dragon::MODE_KEY_B);
+    break;
+  case 'a':
+    g_dragon.setMode(Dragon::MODE_ANGRY1);
+    break;
+  case 'p':
+    g_dragon.setMode(Dragon::MODE_HAPPY);
+    break;
+  case '-':
+  case '_':
+    g_dragon.setMode((Dragon::Mode)(g_dragon.getMode() - 1));
+    break;
+  case '+':
+  case '=':
+    g_dragon.setMode((Dragon::Mode)(g_dragon.getMode() + 1));
+    break;
+  case ',':
+  case '<':
+    inc = -1;
+    break;
+  case '.':
+  case '>':
+    inc = +1;
+    break;
+  default:
+    acPrintf("Unknown key: 0x%02x = '%c'\n",
+      c,
+      c >= ' ' && c < 0x7f ? c : '?');
+    break;
+  }
 
+  if (inc)
+    g_dragon.debugIncrement(inc);
 }
 
 static void checkKey()
@@ -90,4 +188,5 @@ void dragonButtonUpdate()
 {
   checkKey();
   updateButtons();
+  updateHelp();
 }

@@ -22,10 +22,26 @@ void AcServo::go(
       int val, 
       int duration_millis)
 {
-  move_duration_millis_ = duration_millis;
-  target_ = clamp(val);
-  start_pos_ = val_;
-  start_millis_ = millis();
+  if (duration_millis <= 0)
+  {
+    target_ = val_ = clamp(val);
+    servo_.write(val_);
+  }
+  else
+  {
+    move_duration_millis_ = duration_millis;
+    target_ = clamp(val);
+    start_pos_ = val_;
+    start_millis_ = millis();
+  }
+}
+
+void AcServo::debugIncrement(int inc)
+{
+  val_ = acClamp(val_ + inc, 0, 255);
+  acPrintf("Servo Value = %d\n", val_);
+  target_ = val_;
+  servo_.write(val_);
 }
 
 void AcServo::update(uint32_t now_millis)

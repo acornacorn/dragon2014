@@ -155,6 +155,7 @@ CPP_FILES += ac_led_rgb.cpp
 CPP_FILES += dragon_servos.cpp
 CPP_FILES += dragon_buttons.cpp
 CPP_FILES += dragon_leds.cpp
+CPP_FILES += dragon.cpp
 
 OBJS := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o)
 

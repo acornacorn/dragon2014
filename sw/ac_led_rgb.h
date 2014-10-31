@@ -11,6 +11,8 @@ public:
   void shiftTo(int r, int g, int b, int duration_millis);
   void update();
 
+  void debugIncrement(int chan, int inc);
+
 private:
   void write();
 

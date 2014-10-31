@@ -1,5 +1,6 @@
 #include <dragon_leds.h>
 #include <dragon_pins.h>
+#include <dragon.h>
 #include <ac_printf.h>
 #include <ac_led_rgb.h>
 #include <ac_counter.h>
@@ -7,23 +8,17 @@
 
 static const bool DEBUG_LEDS = true;
 
-#define TEST_LEDS 0
+AcLedRgb g_eyes;
 
-static AcLedRgb g_eyes;
-
-#if TEST_LEDS
-static AcCounter c1;
-#endif
+static AcCounter g_led_tst_cnt;
 
 void dragonLedInit()
 {
   g_eyes.init(dpin_eye_red, dpin_eye_green, dpin_eye_blue);
 
-#if TEST_LEDS
-  dragonLedColorSet(0,0,255);
-  dragonLedColorShiftTo(255,10,10, 1000);
-  c1.init(1000, 6);
-#endif
+  //dragonLedColorSet(0,0,255);
+  //dragonLedColorShiftTo(255,10,10, 1000);
+  g_led_tst_cnt.init(1000, 6);
 }
 
 void dragonLedColorSet(
@@ -57,20 +52,21 @@ void dragonLedUpdate()
 {
   g_eyes.update();
 
-#if TEST_LEDS
-  uint32_t val;
-  if (c1.check(&val))
+  if (g_dragon.getMode() == Dragon::MODE_TEST)
   {
-    switch(val)
+    uint32_t val;
+    if (g_led_tst_cnt.check(&val))
     {
-    case 0: dragonLedColorShiftTo(255,0,0,500); break;
-    case 1: dragonLedColorShiftTo(0,255,0,500); break;
-    case 2: dragonLedColorShiftTo(0,0,255,500); break;
-    case 3: dragonLedColorShiftTo(255,255,0,500); break;
-    case 4: dragonLedColorShiftTo(255,0,255,500); break;
-    case 5: dragonLedColorShiftTo(0,255,255,500); break;
+      switch(val)
+      {
+      case 0: dragonLedColorShiftTo(255,0,0,500); break;
+      case 1: dragonLedColorShiftTo(0,255,0,500); break;
+      case 2: dragonLedColorShiftTo(0,0,255,500); break;
+      case 3: dragonLedColorShiftTo(255,255,0,500); break;
+      case 4: dragonLedColorShiftTo(255,0,255,500); break;
+      case 5: dragonLedColorShiftTo(0,255,255,500); break;
+      }
     }
   }
-#endif
 }
 

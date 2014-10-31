@@ -10,6 +10,26 @@ static const int dpin_leye_servo = 15;
 static const int dpin_reye_servo = 16;
 static const int dpin_lips_servo = 17;
 
+static const int sv_look_min = 29;
+static const int sv_look_mid = 107;
+static const int sv_look_max = 176;
+
+static const int sv_leye_min = 29;
+static const int sv_leye_mid = 107;
+static const int sv_leye_max = 176;
+static const int sv_leye_closed = 107;
+
+static const int sv_reye_min = 29;
+static const int sv_reye_mid = 107;
+static const int sv_reye_max = 176;
+static const int sv_reye_closed = 107;
+
+static const int sv_lips_min = 29;
+static const int sv_lips_mid = 107;
+static const int sv_lips_max = 176;
+
+
+
 // eye LEDS
 static const int dpin_eye_red = 21;
 static const int apin_eye_red = 7;
