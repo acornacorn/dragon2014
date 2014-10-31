@@ -77,6 +77,7 @@ public:
   void incEmotion(int inc);
 
   void setEyePos(int left, int right, int duration_millis);
+  void setLipPos(int lip_pos, int duration_millis);
 
   void enableBlink(bool enable);
   bool getEnableBlink() { return blink_enable_; }

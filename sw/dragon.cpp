@@ -83,9 +83,17 @@ void Dragon::setModeEmotion(Mode mode)
   eye_color_cnt_.init(emotion_->transition_period, 2);
   eye_color_transition_ = true;
 
+#if 1
+  setEyePos(emotion_->leye,
+            emotion_->reye,
+            emotion_->transition_period);
+  setLipPos(emotion_->lips,
+            emotion_->transition_period);
+#else
   sv_leye_.go(emotion_->leye, emotion_->transition_period);
   sv_reye_.go(emotion_->reye, emotion_->transition_period);
   sv_lips_.go(emotion_->lips, emotion_->transition_period);
+#endif
 }
 
 Dragon::Mode Dragon::setModeInternal(Mode mode)
@@ -148,6 +156,11 @@ void Dragon::setEyePos(int left, int right, int duration_millis)
     sv_leye_.go(l_eye_pos_, duration_millis);
   if (!r_eye_close_)
     sv_reye_.go(r_eye_pos_, duration_millis);
+}
+
+void Dragon::setLipPos(int lip_pos, int duration_millis)
+{
+  sv_lips_.go(lip_pos, duration_millis);
 }
 
 
