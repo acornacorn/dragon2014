@@ -155,6 +155,34 @@ void Dragon::setEyePos(int left, int right, int duration_millis)
 // blink delay in ms
 static uint16_t g_blink_times[] = 
 {
+#if 1
+  // sunchine times -- still a little fast
+3000,
+1800,
+2700,
+2200,
+4500,
+1543,
+2429,
+2539,
+2219,
+2532,
+2344,
+1934,
+2610,
+2080,
+2178,
+2830,
+2487,
+2400,
+2432,
+2383,
+2490,
+2285,
+1800,
+2410,
+#else
+  // acorn times -- to fast
   1270,
   510,
   1383,
@@ -175,6 +203,7 @@ static uint16_t g_blink_times[] =
   2552,
   2864,
   1961,
+#endif
 };
 
 
