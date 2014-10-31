@@ -1,5 +1,5 @@
 #include <ac_servo.h>
-#include <ac_timer.h>
+#include <ac_counter.h>
 #include <ac_printf.h>
 #include <dragon_pins.h>
 

@@ -149,6 +149,7 @@ INCLUDES += -Iarduino/libraries/Bounce
 CPP_FILES += ac_alive.cpp
 CPP_FILES += ac_servo.cpp
 CPP_FILES += ac_timer.cpp
+CPP_FILES += ac_counter.cpp
 CPP_FILES += ac_printf.cpp
 CPP_FILES += ac_led_rgb.cpp
 CPP_FILES += dragon_servos.cpp

@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 
+// a repeating timer.
 class AcTimer
 {
 public:
   // (re)start the timer
   void init(uint32_t period);
 
-  // true if it fired
+  // true if it fired since last call.
+  // This also resets the timer for the next period.
   bool check(uint32_t now_millis);
   bool check();
 
@@ -19,17 +21,6 @@ public:
 private:
   uint32_t period_;
   uint32_t next_millis_;
-};
-
-class AcCounter
-{
-public:
-  void init(uint32_t period, uint32_t wrap);
-  bool check(uint32_t* val);
-private:
-  AcTimer timer_;
-  uint32_t val_;
-  uint32_t wrap_;
 };
 
 #endif

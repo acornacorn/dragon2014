@@ -43,23 +43,3 @@ void AcTimer::wait()
   }
 }
 
-void AcCounter::init(uint32_t period, uint32_t wrap)
-{
-  timer_.init(period);
-  wrap_ = wrap;
-}
-
-bool AcCounter::check(uint32_t* val)
-{
-  bool rv = false;
-  if (timer_.check())
-  {
-    val_++;
-    if (val_ >= wrap_)
-      val_ = 0;
-    rv = true;
-  }
-  *val = val_;
-  return rv;
-}
-
