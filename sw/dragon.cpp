@@ -169,6 +169,33 @@ void Dragon::setLipPos(int lip_pos, int duration_millis)
 static uint16_t g_blink_times[] = 
 {
 #if 1
+  // slower from sunshine 2
+4000,
+4869,
+3700,
+3200,
+4436,
+4943,
+3429,
+3539,
+4219,
+3532,
+3344,
+3934,
+3610,
+4080,
+3178,
+3830,
+3487,
+3400,
+3432,
+3383,
+3490,
+4285,
+3769,
+3410
+#else
+#if 1
   // sunchine times -- still a little fast
 3000,
 1800,
@@ -216,6 +243,7 @@ static uint16_t g_blink_times[] =
   2552,
   2864,
   1961,
+#endif
 #endif
 };
 
