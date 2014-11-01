@@ -118,23 +118,23 @@ C_FILES += $(TEENSY3)/usb_serial.c
 C_FILES += $(TEENSY3)/usb_dev.c
 C_FILES += $(TEENSY3)/analog.c
 
-CPP_FILES += $(TEENSY3)/Tone.cpp
-CPP_FILES += $(TEENSY3)/AudioStream.cpp
+#CPP_FILES += $(TEENSY3)/Tone.cpp
+#CPP_FILES += $(TEENSY3)/AudioStream.cpp
 CPP_FILES += $(TEENSY3)/HardwareSerial2.cpp
 CPP_FILES += $(TEENSY3)/HardwareSerial1.cpp
-CPP_FILES += $(TEENSY3)/new.cpp
-CPP_FILES += $(TEENSY3)/DMAChannel.cpp
+#CPP_FILES += $(TEENSY3)/new.cpp
+#CPP_FILES += $(TEENSY3)/DMAChannel.cpp
 CPP_FILES += $(TEENSY3)/WMath.cpp
 CPP_FILES += $(TEENSY3)/HardwareSerial3.cpp
 CPP_FILES += $(TEENSY3)/usb_inst.cpp
-CPP_FILES += $(TEENSY3)/IntervalTimer.cpp
+#CPP_FILES += $(TEENSY3)/IntervalTimer.cpp
 CPP_FILES += $(TEENSY3)/yield.cpp
-CPP_FILES += $(TEENSY3)/Print.cpp
-CPP_FILES += $(TEENSY3)/usb_flightsim.cpp
-CPP_FILES += $(TEENSY3)/Stream.cpp
-CPP_FILES += $(TEENSY3)/IPAddress.cpp
-CPP_FILES += $(TEENSY3)/avr_emulation.cpp
-CPP_FILES += $(TEENSY3)/WString.cpp
+#CPP_FILES += $(TEENSY3)/Print.cpp
+#CPP_FILES += $(TEENSY3)/usb_flightsim.cpp
+#CPP_FILES += $(TEENSY3)/Stream.cpp
+#CPP_FILES += $(TEENSY3)/IPAddress.cpp
+#CPP_FILES += $(TEENSY3)/avr_emulation.cpp
+#CPP_FILES += $(TEENSY3)/WString.cpp
 
 # Use my own main() function
 #CPP_FILES += $(TEENSY3)/main.cpp
